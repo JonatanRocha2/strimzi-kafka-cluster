@@ -1,0 +1,6 @@
+clusterName: kafka-cluster
+clusterNamespace: kafka
+image:
+  repository: ghcr.io/lsst-sqre/strimzi-registry-operator
+  tag: 0.6.0
+operatorNamespace: kafka
