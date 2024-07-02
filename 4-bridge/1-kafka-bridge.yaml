@@ -1,0 +1,21 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaBridge
+metadata:
+  name: kafka-bridge
+  namespace: kafka
+spec:
+  replicas: 1
+  bootstrapServers: kafka-cluster-kafka-bootstrap:9093
+  tls:
+    trustedCertificates:
+    - secretName: kafka-cluster-cluster-ca-cert
+      certificate: ca.crt
+  authentication:
+    type: tls
+    certificateAndKey:
+      secretName: user-bridge
+      certificate: user.crt
+      key: user.key
+  http:
+    port: 8080
+  enableMetrics: true

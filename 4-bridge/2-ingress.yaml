@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kafka-bridge-api
+  namespace: kafka
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+    - host: kafka-bridge.local
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: kafka-bridge-bridge-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - kafka-bridge.local
+      secretName: kafka-bridge.local
