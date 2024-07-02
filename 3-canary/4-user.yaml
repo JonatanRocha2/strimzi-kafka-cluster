@@ -1,0 +1,32 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: canary
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka-cluster
+    app: strimzi-canary
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: topic
+          name: __strimzi_canary
+        operations:
+          - All
+        host: "*"
+      - resource:
+          type: cluster
+          name: kafka-cluster
+        operations:
+          - All
+        host: "*"
+      - resource:
+          type: group
+          name: strimzi-canary-group
+        operations:
+          - All
+        host: "*"

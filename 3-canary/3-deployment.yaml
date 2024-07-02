@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strimzi-canary
+  namespace: kafka
+  labels:
+    app: strimzi-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: strimzi-canary
+  template:
+    metadata:
+      labels:
+        app: strimzi-canary
+    spec:
+      serviceAccountName: strimzi-canary
+      containers:
+        - name: strimzi-canary
+          image: quay.io/strimzi/canary:0.6.0
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-cluster-kafka-bootstrap:9093
+            - name: RECONCILE_INTERVAL_MS
+              value: "3600000"
+            - name: TLS_ENABLED
+              value: "true"
+            - name: TLS_CA_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-cluster-cluster-ca-cert
+                  key: ca.crt
+            - name: TLS_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: user-canary
+                  key: user.crt
+            - name: TLS_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: user-canary
+                  key: user.key
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+  strategy:
+    type: Recreate
