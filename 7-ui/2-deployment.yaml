@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui
+  namespace: kafka
+  labels:
+    app: kafka-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui
+  template:
+    metadata:
+      labels:
+        app: kafka-ui
+    spec:
+      containers:
+        - name: kafka-ui
+          image: dockerhub/provectuslabs/kafka-ui:v0.7.2
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 15
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: kafka-truststore
+              readOnly: true
+              mountPath: /opt/cert/kafka
+            - name: kafka-keystore
+              readOnly: true
+              mountPath: /opt/cert/client
+            - name: kafka-ui-config
+              mountPath: /kafka-ui-config
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            # Config
+            - name: SPRING_CONFIG_ADDITIONAL-LOCATION
+              value: /kafka-ui-config/config.yml
+
+            # kafka-server
+            - name: KAFKA_CLUSTERS_0_NAME
+              value: devel
+            - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+              value: "kafka-cluster-kafka-bootstrap:9093"
+            - name: KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL
+              value: "SSL"
+            - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION
+              value: /opt/cert/kafka/ca.p12
+            - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-cluster-cluster-ca-cert
+                  key: ca.password
+            - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION
+              value: /opt/cert/client/user.p12
+            - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-admin
+                  key: user.password
+      volumes:
+        - name: kafka-truststore
+          secret:
+            secretName: kafka-cluster-cluster-ca-cert
+            defaultMode: 420
+        - name: kafka-keystore
+          secret:
+            secretName: user-admin
+            defaultMode: 420
+        - name: kafka-ui-config
+          configMap:
+            name: kafka-ui-config
+            items:
+              - key: config.yml
+                path: config.yml
