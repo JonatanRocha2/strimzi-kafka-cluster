@@ -1,0 +1,145 @@
+affinity: {}
+annotations: {}
+connectBuildTimeoutMs: 300000
+createAggregateRoles: false
+createGlobalResources: true
+cruiseControl:
+  image:
+    name: kafka
+    registry: ''
+    repository: ''
+    tagPrefix: ''
+dashboards:
+  annotations: {}
+  enabled: false
+  extraLabels: {}
+  label: grafana_dashboard
+  labelValue: '1'
+  namespace: null
+defaultImageRegistry: quay.io
+defaultImageRepository: strimzi
+defaultImageTag: 0.40.0
+extraEnvs: []
+featureGates: ''
+fullReconciliationIntervalMs: 120000
+generateNetworkPolicy: true
+image:
+  name: operator
+  registry: ''
+  repository: ''
+  tag: ''
+kafka:
+  image:
+    name: kafka
+    registry: ''
+    repository: ''
+    tagPrefix: ''
+kafkaBridge:
+  image:
+    name: kafka-bridge
+    registry: ''
+    repository: null
+    tag: 0.28.0
+kafkaConnect:
+  image:
+    name: kafka
+    registry: ''
+    repository: ''
+    tagPrefix: ''
+kafkaExporter:
+  image:
+    name: kafka
+    registry: ''
+    repository: ''
+    tagPrefix: ''
+kafkaInit:
+  image:
+    name: operator
+    registry: ''
+    repository: ''
+    tag: ''
+kafkaMirrorMaker:
+  image:
+    name: kafka
+    registry: ''
+    repository: ''
+    tagPrefix: ''
+kafkaMirrorMaker2:
+  image:
+    name: kafka
+    registry: ''
+    repository: ''
+    tagPrefix: ''
+kanikoExecutor:
+  image:
+    name: kaniko-executor
+    registry: ''
+    repository: ''
+    tag: ''
+kubernetesServiceDnsDomain: cluster.local
+labels: {}
+labelsExclusionPattern: ''
+leaderElection:
+  enable: true
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 30
+logConfigMap: strimzi-cluster-operator
+logConfiguration: ''
+logLevel: ${env:STRIMZI_LOG_LEVEL:-INFO}
+logVolume: co-config-volume
+mavenBuilder:
+  image:
+    name: maven-builder
+    registry: ''
+    repository: ''
+    tag: ''
+nodeSelector: {}
+operationTimeoutMs: 400000
+podDisruptionBudget:
+  enabled: false
+  maxUnavailable: null
+  minAvailable: 1
+podSecurityContext: {}
+priorityClassName: ''
+rbac:
+  create: true
+readinessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 30
+replicas: 1
+resources:
+  limits:
+    cpu: 1000m
+    memory: 384Mi
+  requests:
+    cpu: 200m
+    memory: 384Mi
+securityContext: {}
+serviceAccount: strimzi-cluster-operator
+serviceAccountCreate: true
+tlsSidecarEntityOperator:
+  image:
+    name: kafka
+    registry: ''
+    repository: ''
+    tagPrefix: ''
+tmpDirSizeLimit: 1Mi
+tolerations: []
+topicOperator:
+  image:
+    name: operator
+    registry: ''
+    repository: ''
+    tag: ''
+userOperator:
+  image:
+    name: operator
+    registry: null
+    repository: null
+    tag: ''
+watchAnyNamespace: false
+watchNamespaces: []
+global:
+  cattle:
+    systemProjectId: p-pb6g6
