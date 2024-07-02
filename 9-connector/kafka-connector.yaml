@@ -1,0 +1,48 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: debezium-connector
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: debezium-connect-cluster
+spec:
+  class: io.debezium.connector.oracle.OracleConnector
+  tasksMax: 1
+  config:
+    config.action.reload: restart
+    database.connection.adapter: logminer
+    database.dbname: ORCLCDB
+    database.password: ${secrets:kafka/debezium-connector:password}
+    database.server.name: ""
+    database.url: ${secrets:kafka/debezium-connector:databaseUrl}
+    database.user: ${secrets:kafka/debezium-connector:username}
+    decimal.handling.mode: string
+    errors.retry.timeout: 0
+    event.processing.failure.handling.mode: ignore
+    header.converter: org.apache.kafka.connect.json.JsonConverter
+    internal.database.oracle.version: v2
+    log.mining.strategy: online_catalog
+    schema.history.internal.consumer.security.protocol: SSL
+    schema.history.internal.consumer.ssl.keystore.location: /opt/kafka/external-configuration/user-connect/user.p12
+    schema.history.internal.consumer.ssl.keystore.password: ${secrets:kafka/user-connect:user.password}
+    schema.history.internal.consumer.ssl.truststore.location: /opt/kafka/external-configuration/cluster-ca/ca.p12
+    schema.history.internal.consumer.ssl.truststore.password: ${secrets:kafka/kafka-cluster-cluster-ca-cert:ca.password}
+    schema.history.internal.kafka.bootstrap.servers: kafka-cluster-kafka-bootstrap:9093
+    schema.history.internal.kafka.topic: schema-changes.""
+    schema.history.internal.producer.security.protocol: SSL
+    schema.history.internal.producer.ssl.keystore.location: /opt/kafka/external-configuration/user-connect/user.p12
+    schema.history.internal.producer.ssl.keystore.password: ${secrets:kafka/user-connect:user.password}
+    schema.history.internal.producer.ssl.keystore.type: PKCS12
+    schema.history.internal.producer.ssl.truststore.location: /opt/kafka/external-configuration/cluster-ca/ca.p12
+    schema.history.internal.producer.ssl.truststore.password: ${secrets:kafka/kafka-cluster-cluster-ca-cert:ca.password}
+    schema.history.internal.producer.ssl.truststore.type: PKCS12
+    schema.history.internal.store.only.captured.tables.ddl: true
+    snapshot.mode: INITIAL
+    snapshot.recovery.check.interval.ms: 5000
+    schema.include.list: ""
+    table.include.list: ""
+    topic.prefix: ""
+    topic.creation.enable: true
+    topic.creation.default.replication.factor: 1
+    topic.creation.default.partitions: 3
+    table.whitelist: ""
